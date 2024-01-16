@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>HR Dashboard | Innoventures</title>
+  <link rel="stylesheet" href="/static/style.css" />
+ 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+<body>
+  {% if message %}
+        <div id="alertContainer">
+            <script>
+                // Create and show the alert dynamically
+                var alertContainer = document.getElementById("alertContainer");
+                var alertMessage = document.createTextNode("{{ message }}");
+                var alertDiv = document.createElement("div");
+                alertDiv.setAttribute("class", "alert");
+                alertDiv.appendChild(alertMessage);
+                alertContainer.appendChild(alertDiv);
+
+                // Set a timeout to remove the alert after a few seconds (adjust as needed)
+                setTimeout(function() {
+                    alertContainer.removeChild(alertDiv);
+                }, 5000); // 5000 milliseconds = 5 seconds
+            </script>
+        </div>
+    {% endif %}
+  <div class="container">
+    <nav>
+      <div class="navbar">
+        <div class="logo">
+          <h1>ResumeTAG</h1>
+        </div>
+        <ul>
+          <li>
+            <a href="{{ url_for('index') }}">
+              <i class="fas fa-user"></i>
+              <span class="nav-item">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('selected_candidates') }}">
+              <i class="fab fa-dochub"></i>
+              <span class="nav-item">Selected</span>
+            </a>
+            
+          </li>
+          <li>
+            <a href="{{ url_for('interviews') }}">
+              <i class="fas fa-chart-bar"></i>
+              <span class="nav-item">Interview</span>
+            </a>
+            
+          </li>
+          
+          <li>
+            <a href="{{ url_for('About_us') }}">
+              <i class="fas fa-question-circle"></i>
+              <span class="nav-item">About</span>
+            </a>
+          </li>
+          <li>
+            <a href="/" class="logout" id="logout-btn"> 
+              <i class="fas fa-sign-out-alt"></i>
+              <span class="nav-item">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="main">
+      
+      <div class="main-body">
+        <h1></h1>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          select {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+          }
+          option {
+            padding: 5px;
+          }
+          .match-chart {
+            width: 150px;  /* Set the width */
+            height: 150px; /* Set the height */
+           }
+           
+    #matched-values {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .matched-values {
+    margin-top: 10px; /* Adjust the top margin as needed */
+    font-weight: bold;
+    color: #333; /* Set your desired text color */
+  }
+  #uploading-message {
+  display: none;
+  color: rgb(29, 9, 96);
+  background-color: #89c26e; /* Light red background */
+  padding: 10px;
+  border: 1px solid #210681; /* Border color */
+  border-radius: 5px;
+  margin-top: 10px; /* Add some margin to separate from other elements */
+  text-align: center;
+  font-size: 16px;
+  display: block;
+  padding: 10px;
+}
+
+
+        </style>
+      </head>
+    
+    <body>
+      
+
+      <script>
+        function showUploadingMessage() {
+          var uploadingMessage = document.getElementById("uploading-message");
+          uploadingMessage.style.display = "block";
+        }
+      </script>
+      
+      <!--<div id="uploading-message" style="display: none; color: rgb(165, 24, 24);">
+        Uploading file. Please wait...
+      </div>
+      <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showUploadingMessage()">
+        <label for="resume" style="color: white; margin-bottom:10px;">UPLOAD RESUME</label>
+        <input type="file" name="document" style="color: white;" accept=".pdf" required>
+        <button type="submit" style="margin-bottom: 10px;">Upload Resume</button>
+      </form>-->
+      <div id="uploading-message" style="display: none; color: rgb(29, 9, 96); font-size:medium; ">
+        Uploading file. Please wait...
+    </div>
+    <br>
+    <form action="/upload" method="post" enctype="multipart/form-data" onsubmit="showUploadingMessage()">
+        <label for="resume" style="color: white; margin-bottom:10px;">UPLOAD RESUME</label>
+        <input type="file" name="document[]" style="color: white;" accept=".pdf" multiple required>
+        <button type="submit" style="margin-bottom: 10px;">Upload Resume</button>
+    </form>
+      
+      
+      
+      
+    
+        <form action="{{ url_for('index') }}" method="get" style="margin-bottom: 30px">
+          <div>
+            <label for="search_bar" style="color: white;">Search:</label>
+            <input type="text" id="search_bar" name="search" placeholder="search here.." value="{{ request.args.get('search', '') }}">>
+            <button type="submit">Search</button>
+            <button type="button" class="filter-sort-btn" onclick="handleFilter()">Filter</button>
+          </div>
+          <div id="dynamicFields">
+            <label style="color: white;">Keys:</label>
+            <button type="button" class="key-btn" data-key="education">Education</button>
+            <button type="button" class="key-btn" data-key="location">Location</button>
+            <button type="button" class="key-btn" data-key="skills">Skills</button>
+            <button type="button" class="key-btn" data-key="certification">Certification</button>
+            <!--<button type="button" class="key-btn" data-key="contact">Contact</button>-->
+            <label></label>
+            <button type="button" class="operator-btn" data-operator="and">AND</button>
+            <button type="button" class="operator-btn" data-operator="or">OR</button>
+          </div>
+        </form>
+        <div id="filterMenu" class="filter-menu">
+          <label>Matched Percentage:</label>
+          <br>
+          <label><input type="checkbox" value="91-100"> 91-100%</label>
+          <label><input type="checkbox" value="81-90"> 81-90%</label>
+          <label><input type="checkbox" value="71-80"> 71-80%</label>
+          <label><input type="checkbox" value="61-70"> 61-70%</label>
+          <label><input type="checkbox" value="51-60"> 51-60%</label>
+          <label><input type="checkbox" value="41-50"> 41-50%</label>
+          <label><input type="checkbox" value="31-40"> 31-40%</label>
+          <label><input type="checkbox" value="21-30"> 21-30%</label>
+          <label><input type="checkbox" value="11-20"> 11-20%</label>
+          <label><input type="checkbox" value="0-10"> 0-10%</label>
+          
+          <!-- Add more checkboxes as needed -->
+        </div>
+        <div id="messageContainer"></div>
+
+
+       <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <!--<th>Match Score</th>-->
+                <th>Match chart</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for candidate, match_percentage, matched_values in candidates %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('candidate_details', candidate_id=candidate['_id']) }}" 
+                     title="Skills: {{ ', '.join(candidate['skills']) }}, Certifications: {{ ', '.join(candidate['certification']) }}, Location: {{ candidate['location'] }}">
+                    {{ candidate['name'] }}
+                  </a>
+                  <p style="font-size: small; padding-top:30px;">Uploaded on:</p>
+                  <p  style="font-size: small;" >{{ candidate['upload_date']}}</p>
+                  <p  style="font-size: small; padding-bottom:5px;" class="dynamic-time"  data-upload-datetime="{{ candidate['upload_datetime']}}" data-candidate-id="{{candidate['_id']}}"></p>
+                </td>
+                
+                
+                <td>{{ candidate['email'] }}</td>
+                <!--<td>{{ match_score }}</td>-->
+                
+                <td>
+                  <div class="chart-container">
+                    <canvas class="match-chart" data-match-percentage="{{ match_percentage }}" data-matched-key-values="{{ matched_values }}" data-tooltip=""></canvas>
+                    <div class="matched-values">Matched Values: </div>
+                    
+
+                  </div>
+                </td>
+              
+                <td>
+                  
+                  <form style="display:flex;"  action="{{ url_for('update_candidate', candidate_id=candidate['_id']) }}" method="post" enctype="multipart/form-data">
+                    <input type="file" name="document" accept=".pdf"  required>
+                    <button type="submit" class="update-resume" data-candidate-id="{{ candidate['_id'] }}"  >Update</button>
+                  </form>
+                  
+                  <!-- Delete button -->
+                  <form style="display:inline-block;" action="/delete-candidate/{{ candidate['_id'] }}" method="post">
+                    
+                    <button type="submit" class="delete-button">Delete</button>
+                    
+                  </form>
+
+            
+                  <!-- Other buttons -->
+                  <button class="view-btn" data-candidate-id="{{ candidate['_id'] }}">View</button>
+                  <form style="display:inline;" action="/select-candidate/{{ candidate['_id'] }}" method="post">
+                    <button type="submit" class="select" data-candidate-id="{{ candidate['_id'] }}" {% if candidate['selected'] %}disabled{% endif %}>
+                      {% if candidate['selected'] %}
+                      Selected
+                      {% else %}
+                      Select
+                      {% endif %}
+                    </button>
+                    
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+        </div>
+        
+
+        
+
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            var viewButtons = document.querySelectorAll(".view-btn");
+            viewButtons.forEach(function (button) {
+              button.addEventListener("click", function () {
+                var candidateId = this.getAttribute("data-candidate-id");
+                window.location.href = "/candidate/" + candidateId;
+              });
+            });
+          });
+        </script>
+
+        <script>
+          document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            window.location.href = "{{ url_for('index') }}?search=" + encodeURIComponent(document.getElementsByName('search')[0].value);
+          });
+          function selectCandidate(candidateId) {
+            fetch('/select-candidate/${candidateId}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                const messageElement = document.getElementById('select-message');
+                if (data.success) {
+                  messageElement.innerText = 'Candidate selected successfully';
+                  messageElement.style.color = 'green';
+                } else {
+                  messageElement.innerText = data.message || data.error || 'Error selecting candidate';
+                  messageElement.style.color = 'red';
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+          }
+          function deleteCandidate(candidateId) {
+            fetch('/delete-candidate/${candidateId}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                const messageElement = document.getElementById('delete-message');
+                if (data.success) {
+                  messageElement.innerText = 'Candidate deleted successfully';
+                  messageElement.style.color = 'green';
+                } else {
+                  messageElement.innerText = data.message || data.error || 'Error deleting candidate';
+                  messageElement.style.color = 'red';
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+          }
+        </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchBar = document.getElementById('search_bar');
+      const keyButtons = document.querySelectorAll('.key-btn');
+      const operatorButtons = document.querySelectorAll('.operator-btn');
+      const form = document.getElementById('searchForm');
+
+      keyButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          const key = button.dataset.key;
+          const currentValue = searchBar.value.trim();
+          if (currentValue !== '') {
+            searchBar.value += `${key}:`;
+          } else {
+            searchBar.value += `${key}:`;
+          }
+        });
+      });
+
+      operatorButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          const operator = button.dataset.operator;
+          const currentValue = searchBar.value.trim();
+          if (operator.toLowerCase() === 'or' && currentValue !== '') {
+            searchBar.value += `,${operator},`;
+          } else if (operator.toLowerCase() === 'and' && currentValue !== '') {
+            searchBar.value += `,${operator},`;
+          } else if (currentValue !== '') {
+            searchBar.value += `,${operator},`;
+          } else {
+            searchBar.value += `${operator}:`;
+          }
+        });
+      });
+
+      function cleanSearchQuery() {
+        searchBar.value = searchBar.value.replace(/,+$/g, '');
+      }
+      
+
+      document.getElementById('searchForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        cleanSearchQuery();
+        window.location.href = "{{ url_for('index') }}?search=" + encodeURIComponent(searchBar.value);
+      });
+    });
+
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+        // Perform logout actions here (e.g., clearing session, API requests, etc.)
+        alert('Logout successful!');
+        // Redirect to the login page
+        window.location.href = '/'; // Replace '/login' with the actual login page URL
+    });
+
+    function uploadResume() {
+        const form = document.getElementById('uploadForm');
+        const formData = new FormData(form);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response or perform any necessary actions
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+
+
+  </script>
+
+  
+only chart
+<!--<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var charts = document.querySelectorAll(".match-chart");
+
+    charts.forEach(function (chart) {
+      console.log("Processing chart element:", chart);
+
+      var matchPercentage = parseFloat(chart.getAttribute("data-match-percentage"));
+      console.log("Match Percentage:", matchPercentage);
+
+      var matchedKeyValues = chart.getAttribute("data-matched-key-values").split(',');
+      console.log("Matched  Values:", matchedKeyValues);
+
+      var ctx = chart.getContext("2d");
+
+      var unmatchedPercentage = 100 - matchPercentage;
+
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Matched", "Unmatched"],
+          datasets: [
+            {
+              data: [matchPercentage, unmatchedPercentage],
+              backgroundColor: [
+                "rgba(0, 255, 0, 0.7)", // Matched color
+                "rgba(255, 0, 0, 0.7)", // Unmatched color
+              ],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutoutPercentage: 70,
+          legend: {
+            display: false,
+          },
+          
+        },
+      });
+      
+
+      console.log("Chart rendered successfully!");
+    });
+  });
+</script>-->
+
+
+final:
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var charts = document.querySelectorAll('.match-chart');
+
+    charts.forEach(function (chart) {
+      var matchPercentage = chart.getAttribute('data-match-percentage');
+      var matchedValuesData = chart.getAttribute('data-matched-key-values');
+
+      // Check if matchedValuesData is not "None" before parsing
+      var matchedValues = matchedValuesData !== "None" ? JSON.parse(matchedValuesData.replace(/'/g, '"')) : [];
+
+      var ctx = chart.getContext('2d');
+      var unmatchedPercentage = 100 - matchPercentage;
+      var matchedValuesDiv = chart.nextElementSibling;
+
+      // Set the initial content
+      matchedValuesDiv.textContent = 'Matched Values: ' + matchedValues.join(', ');
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Matched', 'Unmatched'],
+          datasets: [{
+            data: [matchPercentage, unmatchedPercentage],
+            backgroundColor: ["rgba(0, 255, 0, 0.7)", // Matched color
+              "rgba(255, 0, 0, 0.7)"],
+          }],
+        },
+        options: {
+          cutoutPercentage: 70, // Adjust as needed
+          responsive: false, // Set responsive to false
+          maintainAspectRatio: false,
+          hover: {
+            onHover: function (event, chartElement) {
+              if (chartElement[0]) {
+                var index = chartElement[0]._index;
+                matchedValuesDiv.textContent = index === 0 ? 'Matched Values: ' + matchedValues.join(', ') : 'Matched Values: ';
+              }
+            },
+          },
+          onClick: function (event, chartElement) {
+            matchedValuesDiv.textContent = 'Matched Values: ' + matchedValues.join(', ');
+          },
+        },
+      });
+    });
+  });
+</script>
+
+
+<script>
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    var candidates = document.querySelectorAll('.table-container tbody tr');
+    
+    // Iterate through each candidate
+    candidates.forEach(function(candidate) {
+      var dynamicTimeElement = candidate.querySelector('.dynamic-time');
+        var uploadDatetime = dynamicTimeElement.getAttribute('data-upload-datetime');
+        var momentUploadDatetime = moment(uploadDatetime);
+        var candidateId = dynamicTimeElement.getAttribute('data-candidate-id');
+        console.log('Candidate Element:', candidate);
+        console.log('Candidate ID:', candidateId);
+        // Update the time difference every second for each candidate
+        setInterval(function() {
+            var timeDifference = moment().diff(momentUploadDatetime, 'seconds');
+            var duration = moment.duration(timeDifference, 'seconds');
+            var dynamicTime = '';
+
+            if (duration.years() > 0) {
+                dynamicTime = duration.years() + ' year' + (duration.years() > 1 ? 's' : '') + ' ago';
+            } else if (duration.months() > 0) {
+                dynamicTime = duration.months() + ' month' + (duration.months() > 1 ? 's' : '') + ' ago';
+            } else if (duration.days() > 0) {
+                dynamicTime = duration.days() + ' day' + (duration.days() > 1 ? 's' : '') + ' ago';
+            } else if (duration.hours() > 0) {
+                dynamicTime = duration.hours() + ' hour' + (duration.hours() > 1 ? 's' : '') + ' ago';
+            } else if (duration.minutes() > 0) {
+                dynamicTime = duration.minutes() + ' minute' + (duration.minutes() > 1 ? 's' : '') + ' ago';
+            } else {
+                dynamicTime = 'Just now';
+            }
+            
+            // Update the HTML element with the dynamic time for the current candidate
+            dynamicTimeElement.innerText = dynamicTime.trim();
+        }, 1000); // Update every second // Update every second
+    });
+});
+</script>
+<script>
+  function handleFilter() {
+    var filterMenu = document.getElementById("filterMenu");
+    filterMenu.style.display = (filterMenu.style.display === "block") ? "none" : "block";
+  }
+  
+  document.querySelectorAll('#filterMenu input[type="checkbox"]').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      filterCandidates();
+    });
+  });
+
+  document.querySelectorAll('#filterMenu input[type="checkbox"]').forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
+      filterCandidates();
+    });
+  });
+
+  function filterCandidates() {
+    var selectedPercentages = Array.from(document.querySelectorAll('#filterMenu input[type="checkbox"]:checked')).map(function (checkbox) {
+      return checkbox.value;
+    });
+
+    // Fetch and display only the candidates that match the selected percentages
+    var candidates = document.querySelectorAll('.table-container tbody tr');
+
+    candidates.forEach(function (candidate) {
+      var matchPercentage = parseFloat(candidate.querySelector('.match-chart').getAttribute('data-match-percentage'));
+
+      // Show or hide candidates based on matching percentages
+      var shouldDisplay = selectedPercentages.some(function (selectedRange) {
+        var rangeValues = selectedRange.split('-');
+        var min = parseFloat(rangeValues[0]);
+        var max = parseFloat(rangeValues[1]);
+
+        return matchPercentage >= min && matchPercentage <= max;
+      });
+
+      candidate.style.display = shouldDisplay ? 'table-row' : 'none';
+    });
+  }
+</script>
+
+
+
+
+
+
+  
+    </body>
+    </html>

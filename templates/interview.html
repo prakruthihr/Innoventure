@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard | Innoventures</title>
+    </head>
+    <style>
+        ul {
+  list-style-type: none; /* Remove default list style */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+
+        nav i{
+          width: 30px;
+          font-size: 16px;
+          text-align: center;
+        }
+        .navbar{
+          width: 80%;
+          margin: 0 auto;
+        }
+                /* Your CSS styles remain unchanged */
+        
+                body {
+                    font-family: 'Arial', sans-serif;
+                    background-image: url('https://img.freepik.com/premium-photo/copy-space-office-black-table-with-laptop-notebook-pencil-coffee-cup-with-plat_35674-1635.jpg?size=626&ext=jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
+                    background-color: #181515;
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                }
+        
+                nav {
+                    position: sticky;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    width: 200px;
+                    height: 100vh;
+                    background: #e0d2d2;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 20px;
+                }
+        
+                .navbar {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 20px;
+                }
+        
+                .container {
+                    max-width: 1100px;
+                    margin: 20px;
+                    background-color: #fff;
+                    padding: 20px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    border-radius: 5px;
+                    flex: 1;
+                    margin-left: 30px;
+                    padding-left: 20px;
+                }
+        
+                h2 {
+                    color: #333;
+                }
+        
+                .search-container {
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                }
+        
+                #searchBar,
+                #chooseDate {
+                    padding: 5px;
+                    margin: 0;
+                    box-sizing: border-box;
+                    width: 150px;
+                }
+        
+                button {
+                    padding: 5px 10px;
+                    color: #333;
+                }
+        
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+        
+                th,
+                td {
+                    padding: 12px;
+                    border: 1px solid #150a0a;
+                    text-align: left;
+                    background-color: rgb(219, 217, 222);
+                }
+        
+                th {
+                    background-color: rgb(69, 66, 66);
+                    color: #ece6e6;
+                }
+        
+                td button {
+                    background-color: #2ecc71;
+                    color: #fff;
+                    padding: 8px 16px;
+                    border: none;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+        
+                .modal {
+                    display: none;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: rgba(0, 0, 0, 0.5);
+                    z-index: 1;
+                    width: 100%;
+                    height: 100%;
+                }
+        
+                .modal-content {
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+        
+                .search-container {
+                margin-bottom: 20px;
+            }
+        
+            input[type="text"],
+            input[type="date"] {
+                padding: 8px;
+                width: 200px;
+                margin-right: 10px;
+            }
+        
+            button {
+                padding: 8px 16px;
+                cursor: pointer;
+                background-color: #581fdd; /* Button background color */
+                color: #fff; /* Button text color */
+                border: none;
+                border-radius: 4px;
+            }
+        
+            button.grey {
+                background-color: #808080; /* Grey color for the button */
+                color: #fff; /* Text color for the button */
+            }
+                
+        ul{
+          margin: 0 auto;
+        }
+        li{
+          padding-bottom: 2rem;
+        }
+        li a{
+          font-size: 16px;
+          color: rgb(0, 0, 0);
+        }
+            </style>
+</head>
+
+<body>
+    <nav>
+        <div class="navbar">
+            <div class="logo">
+                <h1>ResumeTAG</h1>
+
+            <br>
+            <br>
+              </div>
+              <ul>
+                <li>
+                  <a href="{{ url_for('index') }}">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-item">Dashboard</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="{{ url_for('interviews') }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="nav-item">Interview</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="{{ url_for('selected_candidates') }}">
+                    <i class="fab fa-dochub"></i>
+                    <span class="nav-item">Selected</span>
+                  </a>
+                </li>      
+                    <a href="/" class="logout" id="logout-btn"> 
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="nav-item">Logout</span>
+                    </a>
+                </li>
+              </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>Scheduled Interviews</h2>
+        <div class="search-container">
+            <label for="searchBar">Search candidates here:</label>
+            <input type="text" id="searchBar" placeholder="Enter candidate name...">
+            <button onclick="searchCandidates()">Search</button>
+            <input type="date" id="chooseDate" placeholder="Search by Date">
+            <button onclick="searchCandidates()">Search by Date</button>
+        </div>
+        <!-- Scheduled interviews table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Candidate Name</th>
+                    <th>Scheduled Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for candidate in scheduled_candidates %}
+                <tr id="candidate-{{ candidate['_id'] }}">
+                    <td>{{ candidate['name'] }}</td>
+                    <td>
+                        Date: {{ candidate['scheduled_interview']['date'] }},
+                        Time: {{ candidate['scheduled_interview']['time'] }}
+                    </td>
+                    <td>
+                        <button class="reschedule-btn" data-candidate-id="{{ candidate['_id'] }}">Reschedule</button>
+                        <button class="call-off-btn" data-candidate-id="{{ candidate['_id'] }}">Call Off</button>
+                        <button class="finished-btn" data-candidate-id="{{ candidate['_id'] }}">Finished</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- End of scheduled interviews table -->
+
+        <!-- Modal for rescheduling -->
+        <div id="reschedule-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeRescheduleModal">&times;</span>
+                <form id="scheduleInterviewForm">
+                    <label>Meeting Mode:</label>
+                    <div>
+                        <input type="radio" id="meetingModeOnline" name="meetingMode" value="online"
+                            onclick="confirmMeetingMode(this.value)"> Online
+                        <input type="radio" id="meetingModeOffline" name="meetingMode" value="offline"
+                            onclick="confirmMeetingMode(this.value)" checked> Offline
+                    </div>
+                    <div id="meetingModeContainer" style="display: none ;padding:10px">
+                        
+                        <label for="meetingPlatform" style="padding:10px">Meeting Platform:</label>
+                        <br>
+            
+                        <input type="text" id="meetingPlatform" name="meetingPlatform" style="padding:10px">
+                        <br>
+                        
+                        <label for="meetingLink" style="padding:10px">Meeting Link:</label>
+                        <br>
+                        <input type="url" id="meetingLink" name="meetingLink" style="padding:10px">
+                    <br>
+                    </div>
+        
+                    <label for="newDate">Select New Date:</label>
+                    <input type="date" id="newDate" required>
+                    <br>
+        <br>
+                    <label for="newTime">Select New Time:</label>
+                    <input type="time" id="newTime"  required style="padding:10px">
+                    <br>
+                    <button id="confirmReschedule" style="padding:10px" >Confirm Reschedule</button>
+                    <br>
+                </form>
+            </div>
+        </div>
+        <!-- End of rescheduling modal -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.call-off-btn').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const candidateId = button.dataset.candidateId;
+                    callOffInterview(candidateId);
+                });
+            });
+
+            document.querySelectorAll('.reschedule-btn').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const candidateId = button.dataset.candidateId;
+                    openRescheduleModal(candidateId);
+                });
+            });
+
+            document.querySelectorAll('.finished-btn').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const candidateId = button.dataset.candidateId;
+                    finishInterview(candidateId);
+                });
+            });
+            document.getElementsByClassName('close')[0].addEventListener('click', function () {
+                closeRescheduleModal();
+            });
+        });
+        function confirmMeetingMode(mode) {
+        const meetingModeContainer = document.getElementById('meetingModeContainer');
+        if (mode === 'online') {
+            meetingModeContainer.style.display = 'block';
+        } else {
+            meetingModeContainer.style.display = 'none';
+        }
+    }
+        function openRescheduleModal(candidateId) {
+            const modal = document.getElementById('reschedule-modal');
+            modal.style.display = 'block';
+            modal.dataset.candidateId = candidateId;
+
+            // Attach event listener to the confirmReschedule button
+            document.getElementById('scheduleInterviewForm').addEventListener('submit', function (event) {event.preventDefault();
+    // Retrieve candidate ID from the modal dataset
+    const candidateId = document.getElementById('reschedule-modal').dataset.candidateId;
+    // Get new date and time
+    const newDate = document.getElementById('newDate').value;
+    const newTime = document.getElementById('newTime').value;
+    const formattedTime = convertTo12HourFormat(newTime);
+
+    // Determine the selected meeting mode
+    const meetingMode = document.querySelector('input[name="meetingMode"]:checked')?.value; // Use optional chaining to prevent null errors
+
+    // Validate if the new date and time are above the current date and time
+    const currentDate = new Date();
+    const selectedDate = new Date(`${newDate}T${newTime}`);
+    if (selectedDate <= currentDate) {
+        alert('Please select a date and time above the current date and time.');
+        return;
+    }
+    // Ask for confirmation from the user
+    const confirmed = confirm('Are you sure you want to reschedule the interview?');
+    if (!confirmed) {
+        // If the user clicks Cancel, do nothing
+        return;
+    }
+    // Add mode of interview, platform, and link if the mode is online
+    if (meetingMode === 'online') {
+        const platform = document.getElementById('meetingPlatform').value;
+        const link = document.getElementById('meetingLink').value;
+// Validate platform and link for online interviews
+        if (!platform || !link) {
+            alert('Please provide both platform and link for online interviews.');
+            return;
+        }
+        const body = { newDate, formattedTime, meetingMode, platform, link };
+        fetch('/reschedule-interview/' + candidateId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        }).then(response => response.json())
+        .then(data => {
+        console.log(data); 
+        if (data.success) {
+        alert(data.message||'Failed to reschedule interview');
+        closeRescheduleModal(); // close the modal after successful scheduling
+      } else {
+        alert(data.error);
+      }
+    })
+    .catch(error => {
+        console.error('Error scheduling online interview:', error);
+        alert('An error occurred while scheduling the interview. Please try again later.');
+      });
+    }else if (meetingMode === 'offline') {
+        
+        const body = { newDate, formattedTime, meetingMode: 'offline' };
+
+fetch('/reschedule-interview/' + candidateId, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body),
+})
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    if (data.success) {
+      alert(data.message);
+      closeRescheduleModal();
+    } else {
+      alert(data.error||'Failed to reschedule interview');
+    }
+  })
+  .catch(error => {
+    console.error('Error scheduling offline interview:', error);
+    alert('An error occurred while scheduling the interview. Please try again later.');
+  });
+}else {
+    alert(data.error || 'Failed to reschedule interview');
+}
+});
+function getSelectedMeetingMode() {
+    const onlineMode = document.getElementById('meetingModeOnline');
+    return onlineMode.checked ? 'online' : 'offline';
+}
+            // Attach event listener to the close button
+            document.querySelector('.close').addEventListener('click', function () {
+                closeRescheduleModal();
+            });
+        }
+        function closeRescheduleModal() {
+            const modal = document.getElementById('reschedule-modal');
+            modal.style.display = 'none';
+        }
+
+        function getCurrentDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function finishInterview(candidateId) {
+            const confirmed = confirm('Are you sure the interview is finished?');
+            if (confirmed) {
+                fetch(`/finish-interview/${candidateId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        removeCandidateFromList(candidateId);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        }
+
+        function removeCandidateFromList(candidateId) {
+            const candidateElement = document.getElementById(`candidate-${candidateId}`);
+            if (candidateElement) {
+                candidateElement.remove();
+            }
+        }
+
+        function callOffInterview(candidateId) {
+            const confirmed = confirm('Are you sure you want to call off the interview?');
+            if (confirmed) {
+                fetch(`/call-off-interview/${candidateId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        removeCandidateFromList(candidateId);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        }
+
+        function convertTo12HourFormat(time24) {
+            const [hour, minute] = time24.split(':');
+            const period = hour < 12 ? 'AM' : 'PM';
+            const hour12 = hour % 12 || 12; // Convert 0 to 12
+
+            return `${hour12}:${minute} ${period}`;
+        }
+
+        function searchCandidates() {
+    const searchInput = document.getElementById('searchBar').value.toLowerCase();
+    const tableRows = document.querySelectorAll('tbody tr'); // Selecting all table rows
+
+    const selectedDate = document.getElementById('chooseDate').value.toLowerCase();
+
+    tableRows.forEach(row => {
+        const candidateName = row.querySelector('td:first-child').textContent.toLowerCase(); // Assuming the candidate name is in the first column
+        const scheduledDate = row.querySelector('td:nth-child(2)').textContent.toLowerCase(); // Assuming the scheduled date is in the second column
+
+        // Check if the candidate name or scheduled date includes the search input
+        const nameMatch = candidateName.includes(searchInput);
+        const dateMatch = scheduledDate.includes(searchInput);
+
+        // Check if the selected date matches the scheduled date
+        const selectedDateMatch = scheduledDate.includes(selectedDate);
+
+        if ((nameMatch || dateMatch) && selectedDateMatch) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+    </script>
+</body>
+
+</html>

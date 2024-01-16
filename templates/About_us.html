@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Resume Tagging</title>
+    <style>
+        body {
+            background: black;
+  background-image: url('https://img.freepik.com/premium-photo/copy-space-office-black-table-with-laptop-notebook-pencil-coffee-cup-with-plat_35674-1635.jpg?size=626&ext=jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
+  background-size: cover; /* Ensures the image covers the entire background */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  height: 100vh; /* Ensures the background takes up the full height of the viewport */
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        header {
+            background-color:grey;
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+
+        section {
+            margin: 20px 0;
+        }
+
+        h2 {
+            color:lightblue;
+        }
+        h3{
+            color: lightpink;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: white;
+            text-align: justify;
+        }
+        img {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>About</h1>
+</header>
+
+<section>
+    <h2>Our Mission</h2>
+    <p>
+        At ResumeTAG, our mission is to simplify the hiring process by leveraging advanced technologies and OpenAI
+        to analyze and tag resumes efficiently. We aim to connect talented individuals with the right
+        opportunities and help businesses find the best candidates for their needs.
+    </p>
+</section>
+
+<section>
+    <h2>Working of Website</h2>
+    <p>
+        ResumeTAG is a resume parsing website in which documents are uploaded and then shorted listed for further rounds based on tags.
+    </p>
+    <h3>Navigation panel</h2>
+    <p>
+        The Navigation panel on the left shows four main sections of the website, the Dasboard, Selected, Interview and About page and Logout button in bottom.
+    </p>
+    <h3> Dashboard</h3>
+    <a href="http://127.0.0.1:3000/index" style="color: aqua;" target="_blank">Link to Dashboard</a>
+    <p>
+       The first screen that appears once you login into the website is dashboard, all the candidate resumes are stored here, we can navigate and search for any required resumes using search bar located on top and tags.
+    </p>
+    <p>
+        On the top there is option to upload multiple resume at the same time which gets added to the table.
+    </p>
+
+    <p>The Website chooses a resume based on 4 tags:</p>
+    <p>   1. LOCATION : the employer can enter the city or state from where he wants the employee to be.</p>
+    <p>   2. EDUCATION: the employer can search for candidate with specific educational qualifications.</p>
+    <p>   3. SKILLS : the employer can search for candidate with the required professional skills.</p>
+    <p>   4. CERTIFICATIONS : the employer can search for a candidate with required global certifications.</p>
+
+    <p>PERCENTAGE FILTERING: It helps to filter the candidates based on match percentage.</p>
+
+    <p>If employer wants to search for a resume based on multiple tags, we have 2 options for combining the tags, AND and OR option.</p>
+       <p>- AND : This option only shows resumes which satisfy the multiple tags given by employer.</p>
+       <p>- OR : This option shows resumes which satisfy any of the multiple tags given by employer.</p>
+       
+    <p>The documents are stored in a table format conatining columns, Name, Email, Match Chart and Action</p>
+       <p>1. NAME : This column stores the name of the candidate.</p>
+       <p>2. EMAIL : This column stores email of the candidate.</p>
+       <p>3. MATCH CHART : This column shows a pie chart displaying by how much percentage does the resume satisfy the tags selected by employer.</p>
+       <p>4. ACTION : This column contains 4 actions buttons, View, Delete, Select and Update</p>
+              <p>- VIEW : this button is used to view the resume of candidate in standard website format, the resume can be downloaded in original format after viewing.</p>
+              <p>- SELECT : this button helps the employer to select a resume, which is then shifted to Selected Candidates page.</p>
+              <p>- DELETE : this button is used to delete a resume.</p>
+              <p>- UPDATE: this button updates the existing resume of employee with new resume based on candidate name.</p>
+              
+   <h3>Selected</h3> 
+   <a href="http://127.0.0.1:3000/selected-candidates" style="color: aqua;"target="_blank">Link to Selected Page</a>
+   <p>
+    The Selected tab in ResumeTAG serves as a dedicated space for managing shortlisted candidates. Once candidates have been reviewed in the Dashboard and selected for further consideration, they are moved to the Selected tab for more focused attention and organization.
+    </p>
+    <p> SEARCH BAR : At the top of the Selected tab, there is a search bar that allows employers to efficiently find specific candidates within the shortlisted pool.</p>
+    <p>TABLE FORMAT :</p>
+    <p>1. CANDIDATE NAME : This column displays the names of the shortlisted candidates.</p>
+    <p>2. ACTIONS : The Actions column provides employers with several options for managing the shortlisted candidates.</p>
+            <p>- VIEW : By clicking the View button, employers can review the detailed resume of the candidate in a standard website format</p>
+            <p>- DELETE : The Delete button allows employers to remove a candidate from the shortlisted pool if needed.</p>
+            <p>- SCHEDULE INTERVIEW : Employers can schedule interviews directly from the Selected tab. This action initiates the process of coordinating interview details with the candidate.</p>
+            <p>- INTERVIEW SCHEDULED : This status indicates that an interview has been scheduled for the candidate within a particular time frame.</p>
+            <p>- INTERVIEW FINISHED : Once the interview is completed, employers can update the candidate's status to reflect that the interview has finished.</p>
+           
+    <h3>Interview</h3> 
+    <a href="http://127.0.0.1:3000/interviews" style="color: aqua;"target="_blank">Link to Interview Page</a>
+    <p>The Scheduled Interview tab in ResumeTAG serves as a centralized hub for managing candidates who have been scheduled for interviews. This section streamlines the coordination and tracking of upcoming interviews, providing essential information for employers
+    </p>
+    <p> SEARCH BAR AND DATE FIELD: At the top of the Scheduled Interview tab, employers have access to a search bar for efficiently finding specific candidates by name.</p>
+    <p> Date field allows employers to filter and view scheduled interviews within a particular timeframe</p>
+    <p>TABLE FORMAT:</p>
+    <p>1. CANDIDATE NAME : This column displays the names of candidates who have scheduled interviews.</p>
+    <p>2. SCHEDULED DATE : The Scheduled Date column indicates the date and time for each candidate's upcoming interview.</p>
+    <p>2. ACTIONS : The Actions column provides employers with several options for managing scheduled interviews.</p>
+            <p>- RESCHEDULE : The Reschedule option allows employers to adjust the date and time of the interview if necessary. This flexibility ensures efficient coordination with candidates.</p>
+            <p>- CALL OFF : Employers can use the Call Off option to cancel a scheduled interview. This action is helpful in situations where an interview needs to be canceled for various reasons.</p>
+            <p>- FINISHED : Once an interview is completed, employers can update the status of the interview to "Finished" in the Actions column.</p>
+            
+</section>
+
+
+<section>
+    <h2>Who We Are</h2>
+    <p>
+        We are a team of dedicated professionals passionate about revolutionizing the recruitment industry.
+        Our diverse team brings together expertise in machine learning, data analysis, and human resources
+        to create a platform that streamlines the hiring process for employers.
+    </p>
+</section>
+
+<section>
+    <h2>Why Choose Us?</h2>
+    <p>
+        - OpenAI : We utilize OpenAI technology to analyze and tag resumes accurately,
+        saving time for both candidates and employers.
+    </p>
+    <p>
+        - User-Friendly Platform: Our user-friendly platform ensures a seamless experience for employers to easily tag and shortlist resumes and send them for Interview process.
+    </p>
+    <p>
+        - Commitment to Excellence: We are committed to providing excellent service, constantly improving
+        our platform, and staying ahead in the rapidly evolving field of recruitment technology.
+    </p>
+</section>
+
+<section>
+    <h2>Contact Us</h2>
+    <p>
+        Have questions or feedback? Feel free to reach out to us at <li><a href="mailto:prakruthihr04@gmail.com">prakruthihr04@gmail.com</a>.</li>
+        <li><a href="mailto:prakruthipudupa@gmail.com">prakruthipudupa@gmail.com</a>.</li>
+        <li><a href="mailto:milli218161@gmail.com">milli218161@gmail.com</a>.</li>
+        <li><a href="mailto:mphaniteja2002@gmail.com">mphaniteja2002@gmail.com</a>.</li>
+
+    </p>
+</section>
+
+</body>
+</html>
